@@ -55,5 +55,5 @@ An android library for navigator that stick on the top
 
 [我的博客地址][3]
 
-[1]: https://github.com/hongyangAndroid/Android-HyViewInject/blob/master/sample_zhy_viewInjector/screen_shot.gif
+[1]: https://github.com/hongyangAndroid/Android-StickyNavLayout/blob/master/sample_zhy_StickyNavLayout/ss_sticky.gif
 [3]: http://blog.csdn.net/lmj623565791
