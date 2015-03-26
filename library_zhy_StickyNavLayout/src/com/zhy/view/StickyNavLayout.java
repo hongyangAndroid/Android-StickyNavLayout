@@ -7,12 +7,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.OverScroller;
 import android.widget.ScrollView;
 
@@ -24,7 +26,7 @@ public class StickyNavLayout extends LinearLayout
 	private ViewPager mViewPager;
 	
 	private int mTopViewHeight;
-	private ScrollView mInnerScrollView;
+	private ViewGroup mInnerScrollView;
 	private boolean isTopHidden = false;
 
 	private OverScroller mScroller;
@@ -36,12 +38,14 @@ public class StickyNavLayout extends LinearLayout
 	private boolean mDragging;
 	
 	
+	
 
 	public StickyNavLayout(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 		setOrientation(LinearLayout.VERTICAL);
 
+		
 		mScroller = new OverScroller(context);
 		mVelocityTracker = VelocityTracker.obtain();
 		mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
@@ -103,11 +107,26 @@ public class StickyNavLayout extends LinearLayout
 			if (Math.abs(dy) > mTouchSlop)
 			{
 				mDragging = true;
-				if (!isTopHidden
-						|| (mInnerScrollView.getScrollY() == 0 && isTopHidden && dy > 0))
+				
+				
+				if(mInnerScrollView instanceof ScrollView)
 				{
-					return true;
+					if (!isTopHidden
+							|| (mInnerScrollView.getScrollY() == 0 && isTopHidden && dy > 0))
+					{
+						return true;
+					}
+				}else if(mInnerScrollView instanceof ListView)
+				{
+					ListView lv = (ListView) mInnerScrollView;
+					View c = lv.getChildAt(lv.getFirstVisiblePosition());
+					if (!isTopHidden
+							|| ( c!= null && c.getTop() == 0 && isTopHidden && dy > 0))
+					{
+						return true;
+					}
 				}
+				
 			}
 			break;
 		}
@@ -123,13 +142,13 @@ public class StickyNavLayout extends LinearLayout
 		{
 			FragmentPagerAdapter fadapter = (FragmentPagerAdapter) a;
 			Fragment item = fadapter.getItem(currentItem);
-			mInnerScrollView = (ScrollView) (item.getView()
+			mInnerScrollView = (ListView) (item.getView()
 					.findViewById(R.id.id_stickynavlayout_innerscrollview));
 		} else if (a instanceof FragmentStatePagerAdapter)
 		{
 			FragmentStatePagerAdapter fsAdapter = (FragmentStatePagerAdapter) a;
 			Fragment item = fsAdapter.getItem(currentItem);
-			mInnerScrollView = (ScrollView) (item.getView()
+			mInnerScrollView = (ListView) (item.getView()
 					.findViewById(R.id.id_stickynavlayout_innerscrollview));
 		}
 
