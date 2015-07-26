@@ -4,7 +4,7 @@ An android library for navigator that stick on the top
 
 # 效果图
 
-![Sample Screenshots][1]
+![](sc.gif)
 
 
 # 用法
@@ -55,5 +55,4 @@ An android library for navigator that stick on the top
 
 [我的博客地址][3]
 
-[1]: https://github.com/hongyangAndroid/Android-StickyNavLayout/blob/master/sample_zhy_StickyNavLayout/ss_sticky.gif
 [3]: http://blog.csdn.net/lmj623565791
