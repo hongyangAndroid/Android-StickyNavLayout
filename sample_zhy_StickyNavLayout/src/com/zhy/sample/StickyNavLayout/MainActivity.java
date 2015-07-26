@@ -6,11 +6,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.zhy.view.SimpleViewPagerIndicator;
 
-public class MainActivity extends FragmentActivity
-{
+public class MainActivity extends FragmentActivity {
 	private String[] mTitles = new String[] { "简介", "评价", "相关" };
 	private SimpleViewPagerIndicator mIndicator;
 	private ViewPager mViewPager;
@@ -18,8 +20,7 @@ public class MainActivity extends FragmentActivity
 	private TabFragment[] mFragments = new TabFragment[mTitles.length];
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -28,51 +29,41 @@ public class MainActivity extends FragmentActivity
 		initEvents();
 	}
 
-	private void initEvents()
-	{
-		mViewPager.setOnPageChangeListener(new OnPageChangeListener()
-		{
+	private void initEvents() {
+		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 			@Override
-			public void onPageSelected(int position)
-			{
+			public void onPageSelected(int position) {
 			}
 
 			@Override
 			public void onPageScrolled(int position, float positionOffset,
-					int positionOffsetPixels)
-			{
+					int positionOffsetPixels) {
 				mIndicator.scroll(position, positionOffset);
 			}
 
 			@Override
-			public void onPageScrollStateChanged(int state)
-			{
+			public void onPageScrollStateChanged(int state) {
 
 			}
 		});
 
 	}
 
-	private void initDatas()
-	{
+	private void initDatas() {
 		mIndicator.setTitles(mTitles);
 
-		for (int i = 0; i < mTitles.length; i++)
-		{
+		for (int i = 0; i < mTitles.length; i++) {
 			mFragments[i] = (TabFragment) TabFragment.newInstance(mTitles[i]);
 		}
 
-		mAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
-		{
+		mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
 			@Override
-			public int getCount()
-			{
+			public int getCount() {
 				return mTitles.length;
 			}
 
 			@Override
-			public Fragment getItem(int position)
-			{
+			public Fragment getItem(int position) {
 				return mFragments[position];
 			}
 
@@ -82,10 +73,10 @@ public class MainActivity extends FragmentActivity
 		mViewPager.setCurrentItem(0);
 	}
 
-	private void initViews()
-	{
+	private void initViews() {
 		mIndicator = (SimpleViewPagerIndicator) findViewById(R.id.id_stickynavlayout_indicator);
 		mViewPager = (ViewPager) findViewById(R.id.id_stickynavlayout_viewpager);
+
 	}
 
 }

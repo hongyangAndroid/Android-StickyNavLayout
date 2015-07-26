@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.zhy.view.SimpleViewPagerIndicator;
 
@@ -86,6 +88,15 @@ public class MainActivity extends FragmentActivity
 	{
 		mIndicator = (SimpleViewPagerIndicator) findViewById(R.id.id_stickynavlayout_indicator);
 		mViewPager = (ViewPager) findViewById(R.id.id_stickynavlayout_viewpager);
+		
+		/*
+		RelativeLayout ll = (RelativeLayout) findViewById(R.id.id_stickynavlayout_topview);
+		TextView tv = new TextView(this);
+		tv.setText("我的动态添加的");
+		tv.setBackgroundColor(0x77ff0000);
+		ll.addView(tv, new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT, 600));
+		*/
 	}
 
 }

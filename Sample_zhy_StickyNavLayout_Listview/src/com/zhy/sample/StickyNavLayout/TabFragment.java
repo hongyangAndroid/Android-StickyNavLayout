@@ -50,7 +50,7 @@ public class TabFragment extends Fragment
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent)
 			{
-				Log.e("tag", "convertView = " + convertView);
+				//Log.e("tag", "convertView = " + convertView);
 				return super.getView(position, convertView, parent);
 			}
 		});
