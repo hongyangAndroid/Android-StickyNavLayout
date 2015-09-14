@@ -115,6 +115,19 @@ public class StickyNavLayout extends LinearLayout {
 					ev2.setAction(MotionEvent.ACTION_DOWN);
 					return dispatchTouchEvent(ev2);
 				}
+			}else if (mInnerScrollView instanceof RecyclerView) {
+
+				RecyclerView rv = (RecyclerView) mInnerScrollView;
+
+				if (!isInControl && android.support.v4.view.ViewCompat.canScrollVertically(rv, -1) && isTopHidden
+						&& dy > 0) {
+					isInControl = true;
+					ev.setAction(MotionEvent.ACTION_CANCEL);
+					MotionEvent ev2 = MotionEvent.obtain(ev);
+					dispatchTouchEvent(ev);
+					ev2.setAction(MotionEvent.ACTION_DOWN);
+					return dispatchTouchEvent(ev2);
+				}
 			}
 			break;
 		}
@@ -161,6 +174,14 @@ public class StickyNavLayout extends LinearLayout {
 									&& c.getTop() == 0//
 									&& isTopHidden && dy > 0)) {
 
+						initVelocityTrackerIfNotExists();
+						mVelocityTracker.addMovement(ev);
+						mLastY = y;
+						return true;
+					}
+				}else if (mInnerScrollView instanceof RecyclerView) {
+					RecyclerView rv = (RecyclerView) mInnerScrollView;
+					if (!isTopHidden || (!android.support.v4.view.ViewCompat.canScrollVertically(rv, -1) && isTopHidden && dy > 0)) {
 						initVelocityTrackerIfNotExists();
 						mVelocityTracker.addMovement(ev);
 						mLastY = y;
