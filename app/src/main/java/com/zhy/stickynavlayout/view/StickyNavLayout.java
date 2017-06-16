@@ -1,5 +1,6 @@
 package com.zhy.stickynavlayout.view;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
@@ -10,6 +11,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 import android.widget.OverScroller;
 
@@ -62,18 +64,19 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed)
     {
-        Log.e(TAG, "onNestedFling");
-        return false;
+        if (!consumed) {
+            animateScroll(velocityY, computeDuration(0),true);
+        } else {
+            animateScroll(velocityY, computeDuration(velocityY));
+        }
+        return true;
     }
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY)
     {
-        Log.e(TAG, "onNestedPreFling");
-        //down - //up+
-        if (getScrollY() >= mTopViewHeight) return false;
-        fling((int) velocityY);
-        return true;
+       //不做拦截 可以传递给子View
+       return false;
     }
 
     @Override
@@ -81,6 +84,63 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
     {
         Log.e(TAG, "getNestedScrollAxes");
         return 0;
+    }
+
+    /**
+     * 根据速度计算滚动动画持续时间
+     * @param velocityY
+     * @return
+     */
+    private int computeDuration(float velocityY) {
+        final int distance;
+        if (velocityY > 0) {
+            distance = Math.abs(mTop.getHeight() - getScrollY());
+        } else {
+            distance = Math.abs(mTop.getHeight() - (mTop.getHeight() - getScrollY()));
+        }
+
+
+        final int duration;
+        velocityY = Math.abs(velocityY);
+        if (velocityY > 0) {
+            duration = 3 * Math.round(1000 * (distance / velocityY));
+        } else {
+            final float distanceRatio = (float) distance / getHeight();
+            duration = (int) ((distanceRatio + 1) * 150);
+        }
+
+        return duration;
+
+    }
+
+
+    private void animateScroll(float velocityY,final int duration){
+        animateScroll(velocityY,duration,false);
+    }
+
+    private void animateScroll(float velocityY, final int duration,boolean down) {
+        final int currentOffset = getScrollY();
+        final int topHeight = mTop.getHeight();
+        if (mOffsetAnimator == null) {
+            mOffsetAnimator = new ValueAnimator();
+            mOffsetAnimator.setInterpolator(mInterpolator);
+            mOffsetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    if (animation.getAnimatedValue() instanceof Integer) {
+                        scrollTo(0, (Integer) animation.getAnimatedValue());
+                    }
+                }
+            });
+        } else {
+            mOffsetAnimator.cancel();
+        }
+        mOffsetAnimator.setDuration(Math.min(duration, 600));
+        //下滑不做动画 没有办法获取到RecyclerView惯性滑动到顶部，可以参考AppBarLayout实现
+        if (velocityY >= 0) {
+            mOffsetAnimator.setIntValues(currentOffset, topHeight);
+            mOffsetAnimator.start();
+        }
     }
 
     private View mTop;
@@ -91,6 +151,8 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
     private OverScroller mScroller;
     private VelocityTracker mVelocityTracker;
+    private ValueAnimator mOffsetAnimator;
+    private Interpolator mInterpolator;
     private int mTouchSlop;
     private int mMaximumVelocity, mMinimumVelocity;
 
