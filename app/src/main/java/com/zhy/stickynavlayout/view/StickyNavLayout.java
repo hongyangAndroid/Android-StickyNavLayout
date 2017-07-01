@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.VelocityTracker;
@@ -61,13 +62,23 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         }
     }
 
+    private int TOP_CHILD_FLING_THRESHOLD = 3;
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed)
     {
+        //如果是recyclerView 根据判断第一个元素是哪个位置可以判断是否消耗
+        //这里判断如果第一个元素的位置是大于TOP_CHILD_FLING_THRESHOLD的
+        //认为已经被消耗，在animateScroll里不会对velocityY<0时做处理
+        if (target instanceof RecyclerView && velocityY < 0) {
+            final RecyclerView recyclerView = (RecyclerView) target;
+            final View firstChild = recyclerView.getChildAt(0);
+            final int childAdapterPosition = recyclerView.getChildAdapterPosition(firstChild);
+            consumed = childAdapterPosition > TOP_CHILD_FLING_THRESHOLD;
+        }
         if (!consumed) {
-            animateScroll(velocityY, computeDuration(0),true);
+            animateScroll(velocityY, computeDuration(0),consumed);
         } else {
-            animateScroll(velocityY, computeDuration(velocityY));
+            animateScroll(velocityY, computeDuration(velocityY),consumed);
         }
         return true;
     }
@@ -113,12 +124,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
     }
 
-
-    private void animateScroll(float velocityY,final int duration){
-        animateScroll(velocityY,duration,false);
-    }
-
-    private void animateScroll(float velocityY, final int duration,boolean down) {
+    private void animateScroll(float velocityY, final int duration,boolean consumed) {
         final int currentOffset = getScrollY();
         final int topHeight = mTop.getHeight();
         if (mOffsetAnimator == null) {
@@ -136,10 +142,17 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
             mOffsetAnimator.cancel();
         }
         mOffsetAnimator.setDuration(Math.min(duration, 600));
-        //下滑不做动画 没有办法获取到RecyclerView惯性滑动到顶部，可以参考AppBarLayout实现
+
         if (velocityY >= 0) {
             mOffsetAnimator.setIntValues(currentOffset, topHeight);
             mOffsetAnimator.start();
+        }else {
+            //如果子View没有消耗down事件 那么就让自身滑倒0位置
+            if(!consumed){
+                mOffsetAnimator.setIntValues(currentOffset, 0);
+                mOffsetAnimator.start();
+            }
+
         }
     }
 
