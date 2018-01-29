@@ -143,7 +143,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         }
         mOffsetAnimator.setDuration(Math.min(duration, 600));
 
-        if (velocityY >= 0) {
+        if (velocityY > 0) {
             mOffsetAnimator.setIntValues(currentOffset, topHeight);
             mOffsetAnimator.start();
         }else {
