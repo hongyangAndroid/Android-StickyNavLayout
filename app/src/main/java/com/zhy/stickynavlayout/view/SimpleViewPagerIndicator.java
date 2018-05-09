@@ -94,6 +94,7 @@ public class SimpleViewPagerIndicator extends LinearLayout
 		setWeightSum(count);
 		for (int i = 0; i < count; i++)
 		{
+			final int pageNum = i;
 			TextView tv = new TextView(getContext());
 			LayoutParams lp = new LayoutParams(0,
 					LayoutParams.MATCH_PARENT);
@@ -108,11 +109,17 @@ public class SimpleViewPagerIndicator extends LinearLayout
 				@Override
 				public void onClick(View v)
 				{
-
+					if (mViewPager != null) {
+						mViewPager.setCurrentItem(pageNum,true);
+					}
 				}
 			});
 			addView(tv);
 		}
+	}
+	private ViewPager mViewPager;
+	public void connectPager(ViewPager mViewPager) {
+		this.mViewPager = mViewPager;
 	}
 
 }
