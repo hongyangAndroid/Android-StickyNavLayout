@@ -24,6 +24,7 @@ public class SimpleViewPagerIndicator extends LinearLayout
 	private float mTranslationX;
 	private Paint mPaint = new Paint();
 	private int mTabWidth;
+	private OnTitleClickListener mOnTitleClickListener;
 
 	public SimpleViewPagerIndicator(Context context)
 	{
@@ -108,11 +109,19 @@ public class SimpleViewPagerIndicator extends LinearLayout
 				@Override
 				public void onClick(View v)
 				{
-
+					mOnTitleClickListener.clickTitle(((TextView)v).getText().toString());
 				}
 			});
 			addView(tv);
 		}
+	}
+
+	public void setOnTitleClickListener(OnTitleClickListener onTitleClickListener){
+		mOnTitleClickListener = onTitleClickListener;
+	}
+
+	public interface OnTitleClickListener{
+		void clickTitle(String currentTitle);
 	}
 
 }
