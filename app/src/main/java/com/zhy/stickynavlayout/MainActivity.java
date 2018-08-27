@@ -6,13 +6,15 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 
 import com.zhy.stickynavlayout.view.SimpleViewPagerIndicator;
 
 
 public class MainActivity extends FragmentActivity
 {
-	private String[] mTitles = new String[] { "简介", "评价", "相关" };
+	private static final String TITLE_1 = "简介",TITLE_2 = "评价",TITLE_3 = "相关";
+	private String[] mTitles = new String[] { TITLE_1,TITLE_2,TITLE_3 };
 	private SimpleViewPagerIndicator mIndicator;
 	private ViewPager mViewPager;
 	private FragmentPagerAdapter mAdapter;
@@ -36,6 +38,7 @@ public class MainActivity extends FragmentActivity
 			@Override
 			public void onPageSelected(int position)
 			{
+
 			}
 
 			@Override
@@ -49,6 +52,24 @@ public class MainActivity extends FragmentActivity
 			public void onPageScrollStateChanged(int state)
 			{
 
+			}
+		});
+		//点击 title 的回调
+		mIndicator.setOnTitleClickListener(new SimpleViewPagerIndicator.OnTitleClickListener() {
+			@Override
+			public void clickTitle(String currentTitle) {
+				Log.d("currentTitle--",currentTitle);
+				switch (currentTitle){
+					case TITLE_1:
+						mViewPager.setCurrentItem(0);
+						break;
+					case TITLE_2:
+						mViewPager.setCurrentItem(1);
+						break;
+					case TITLE_3:
+						mViewPager.setCurrentItem(2);
+						break;
+				}
 			}
 		});
 
